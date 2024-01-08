@@ -8,7 +8,7 @@ chatgpt.
 
 
 ws.A
-<img width="538" alt="image" src="https://github.com/rockyinfossils/VBA-challenge/assets/125318253/0cc206e5-656e-4b23-bd4e-03a3d8cd3374">
+![image](https://github.com/rockyinfossils/VBA-challenge/assets/125318253/00d75a2a-e882-41c7-9baa-11866eb45550)
 
 
 ws.B
