@@ -1,0 +1,144 @@
+Sub CycleWS()
+
+Dim ws As Worksheet
+
+For Each ws In ActiveWorkbook.Worksheets
+    ticker_analysis ws
+Next
+
+End Sub
+
+Sub ticker_analysis(ws As Worksheet)
+
+ws.Activate
+   
+'declare variables
+Dim summary_row As Integer
+        summary_row = 2
+    
+Dim ticker As String
+
+Dim volume As Double
+    volume = 0
+
+Dim open_yr As Double
+Dim close_yr As Double
+
+Dim yrly_chng As Double
+Dim perc_chng As Double
+
+Dim var As Double
+    var = 0
+    
+Dim count As Double
+    count = 0
+
+Dim z As Integer
+    z = 2
+
+'create aggregation columns
+ws.Cells(1, 9).Value = "ticker"
+ws.Cells(1, 10).Value = "yrly change"
+ws.Cells(1, 11).Value = "% change"
+ws.Cells(1, 12).Value = "total stock volume"
+
+'create analysis rows and columns
+ws.Cells(1, 16).Value = "ticker"
+ws.Cells(1, 17).Value = "value"
+ws.Cells(2, 15).Value = "greatest % increase"
+ws.Cells(3, 15).Value = "greatest % decrease"
+ws.Cells(4, 15).Value = "greatest total volume"
+
+
+For z = 2 To 30000
+
+    If ws.Cells(z, 1).Value <> ws.Cells(z - 1, 1).Value Then
+    
+    open_yr = ws.Cells(z, 3)
+    close_yr = ws.Cells(z, 6)
+    volume = ws.Cells(z, 7)
+    
+    End If
+    
+    If ws.Cells(z, 1).Value = ws.Cells(z + 1, 1).Value Then
+    
+    open_yr = open_yr + ws.Cells(z, 3)
+    close_yr = close_yr + ws.Cells(z, 6)
+    volume = volume + ws.Cells(z, 7)
+    
+    End If
+
+
+    If ws.Cells(z, 1).Value <> ws.Cells(z + 1, 1).Value Then
+    
+    ticker = ws.Cells(z, 1)
+    ws.Cells(summary_row, 9).Value = ticker
+    
+    open_yr = open_yr + ws.Cells(z, 3)
+    close_yr = close_yr + ws.Cells(z, 6)
+    
+    yrly_chng = close_yr - open_yr
+    perc_chng = (yrly_chng / close_yr) * 100
+
+    ws.Cells(summary_row, 10).Value = yrly_chng
+    If yrly_chng < 0 Then
+    ws.Cells(summary_row, 10).Interior.ColorIndex = 3
+    Else
+        If yrly_chng > 0 Then
+        ws.Cells(summary_row, 10).Interior.ColorIndex = 4
+        End If
+    End If
+    
+    ws.Cells(summary_row, 11).Value = perc_chng
+        If perc_chng < 0 Then
+    ws.Cells(summary_row, 11).Interior.ColorIndex = 3
+    Else
+        If perc_chng > 0 Then
+        ws.Cells(summary_row, 11).Interior.ColorIndex = 4
+        End If
+    End If
+    
+    volume = volume + ws.Cells(z, 7)
+    ws.Cells(summary_row, 12).Value = volume
+    
+    summary_row = summary_row + 1
+    
+    ticker = ""
+    volume = 0
+    open_yr = 0
+    close_yr = 0
+    count = 0
+    
+    End If
+    
+Next z
+
+Dim x As Integer
+x = 2
+
+greatest_increase = Application.WorksheetFunction.Max(ws.Range("K2:K150"))
+greatest_decrease = Application.WorksheetFunction.Min(ws.Range("K2:K150"))
+greatest_vol = Application.WorksheetFunction.Max(ws.Range("L2:L150"))
+
+ws.Cells(2, 17) = greatest_increase
+ws.Cells(3, 17) = greatest_decrease
+ws.Cells(4, 17) = greatest_vol
+
+For x = 2 To 150
+    
+    If ws.Cells(x, 11) = greatest_increase Then
+    ws.Cells(2, 16) = ws.Cells(x, 9)
+    End If
+    
+    If ws.Cells(x, 11) = greatest_decrease Then
+    ws.Cells(3, 16) = ws.Cells(x, 9)
+    End If
+    
+    If ws.Cells(x, 12) = greatest_vol Then
+    ws.Cells(4, 16) = ws.Cells(x, 9)
+    End If
+    
+Next x
+
+End Sub
+
